@@ -94,7 +94,8 @@ The unread-draft fixture uses `?drafts=1&mode=list&side=1`, extracting the actua
 MessageCollectionModel, MessageModel, EmailModel and attachment models from the reference
 engine. IMAP/network, popup opening and the HTML rendering helper are simulated. Cases cover
 actual UNSEEN filtering, folder/UID collisions, native draft metadata, account races,
-pagination, search exclusion, empty Inbox, retry, text escaping and mobile geometry.
+pagination, search exclusion, an in-flight compose-close refresh after successful send,
+empty Inbox, retry, text escaping and mobile geometry.
 
 The metadata script uses the actual native list click dispatcher with mocked flag updates
 and conversation navigation. It checks pointer/keyboard actions, existing multi-selection

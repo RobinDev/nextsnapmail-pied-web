@@ -13,6 +13,24 @@ check('HTML, CID image, recipients, attachment and reply references survive nati
 check('Listing and opening do not set Seen or rewrite the draft',await p.evaluate(()=>draftData[0].flags.length===0&&draftRequests.every(r=>['PiedWebUnreadDrafts','Message'].includes(r.action))));
 await p.evaluate(()=>{draftData[0].flags.push('\\seen');listVM.popupVisibility(false);});await p.waitForFunction(()=>document.querySelectorAll('.pw-draft-row').length===1);
 check('A draft marked read disappears after composer closes',await p.evaluate(()=>document.querySelector('.pw-draft-row').dataset.uid==='3'));
+// Composer close can start a Drafts query before background Send has removed its
+// durable copy. The later success event must invalidate that stale response.
+await p.evaluate(()=>{
+ draftData[0].flags=[];window.holdDraftList=true;window.releaseDraftList=null;
+ listVM.popupVisibility(true);listVM.popupVisibility(false);
+});await p.waitForFunction(()=>window.releaseDraftList);
+await p.evaluate(()=>{
+ window.oldSentDraftResponse=releaseDraftList;holdDraftList=false;
+ window.sentRaceDraft=structuredClone(draftData.find(item=>Number(item.uid)===2));
+ draftData=draftData.filter(item=>Number(item.uid)!==2);
+ dispatchEvent(new CustomEvent('pw-message-sent',{detail:{account:'fixture-A',folder:'',uid:0,flag:''}}));
+});
+await p.waitForFunction(()=>[...document.querySelectorAll('.pw-draft-row')].map(row=>row.dataset.uid).join(',')==='3');
+await p.evaluate(()=>oldSentDraftResponse());await p.waitForTimeout(100);
+check('A sent edited draft disappears despite an older in-flight refresh',await p.evaluate(()=>(
+ [...document.querySelectorAll('.pw-draft-row')].map(row=>row.dataset.uid).join(',')==='3'
+)));
+await p.evaluate(()=>draftData.unshift(sentRaceDraft));
 await p.locator('.pw-draft-row').click();await p.waitForFunction(()=>openedDrafts.length===2);
 check('Plain draft remains plain in native compose mode',await p.evaluate(()=>!openedDrafts[1][1].isHtml()&&openedDrafts[1][1].plain()==='Mardi prochain ?'));
 await p.evaluate(()=>{listVM.popupVisibility(false);listVM.messageList.page(2);});await p.waitForFunction(()=>document.querySelector('.pw-unread-drafts').hidden);

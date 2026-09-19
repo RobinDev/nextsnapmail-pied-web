@@ -1,5 +1,17 @@
 # Releases
 
+## 1.8.19, 2026-09-19
+
+Sending an edited unread Draft now removes its reminder as soon as the send succeeds. Closing
+the composer could start a Drafts refresh while Undo Send was still saving its durable copy;
+that older response could then redraw the already-sent Draft until the minute poll. The send
+success event now invalidates both the in-flight response and the rendered reminder before
+querying the authoritative Drafts state again.
+
+The browser regression holds the early refresh open, removes the fictional server-side Draft,
+delivers send success, and proves that the late response cannot restore it. No transport or
+mailbox is used.
+
 ## 1.8.18, 2026-09-19
 
 The reader's reminder clock now uses the same icon pipeline as Reply, Mark unread, Archive and

@@ -50,7 +50,7 @@ This does **not** implement a unified inbox or a new vacation responder. Nextclo
 [Nextcloud Calendar](integrations/calendar/README.md) also has a full-window workspace,
 with the native app grid beside the event filter. It is installed and versioned separately.
 
-Release **1.8.18**, tested with Nextcloud **34.0.4**, NextSnapMail **0.1.11**, embedded SnappyMail **2.38.2**. Other versions are unverified.
+Release **1.8.19**, tested with Nextcloud **34.0.4**, NextSnapMail **0.1.11**, embedded SnappyMail **2.38.2**. Other versions are unverified.
 
 1. Follow [installation and removal](docs/INSTALL.md).
 2. Read [what survives upgrades](docs/UPDATES.md).

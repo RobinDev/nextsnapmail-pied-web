@@ -137,13 +137,19 @@
             ++generation; loading = false; opening = false; entries = []; total = 0;
             visible = 3; error = ''; folder = ''; etag = ''; render(); schedule();
         };
+        // Closing the composer schedules a refresh before background Send has necessarily
+        // deleted its durable draft. A successful send is the authoritative later edge:
+        // discard both that possibly stale response and the rows it may have rendered.
+        const messageSent = () => orderChanged();
         addEventListener('focus',wake); document.addEventListener('visibilitychange',wake);
         addEventListener('pw-unread-order-changed', orderChanged);
+        addEventListener('pw-message-sent', messageSent);
         const poll = setInterval(() => void refresh(),60000); schedule();
         ko.utils.domNodeDisposal.addDisposeCallback(dom, () => {
             disposed = true; ++generation; clearTimeout(timer); clearInterval(poll); theme.disconnect();
             subscriptions.forEach(sub => sub.dispose()); removeEventListener('focus',wake); document.removeEventListener('visibilitychange',wake);
             removeEventListener('pw-unread-order-changed', orderChanged);
+            removeEventListener('pw-message-sent', messageSent);
         });
     });
 })();

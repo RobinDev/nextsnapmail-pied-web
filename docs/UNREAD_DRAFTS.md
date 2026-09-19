@@ -22,7 +22,9 @@ then leaves this section. Encrypted drafts should be opened from the ordinary Dr
 where the native decryption lifecycle runs; this shortcut refuses undecoded encrypted content.
 
 The list refreshes after Inbox changes, closing compose, returning to the tab, and once a
-minute while visible. Refreshing reloads the first ten matching drafts. Switching accounts
+minute while visible. Since 1.8.19, a successful background send invalidates an earlier
+compose-close refresh, so a just-sent edited Draft cannot be redrawn from that stale response.
+Refreshing reloads the first ten matching drafts. Switching accounts
 discards stale responses. Network failures expose a Retry action. Subjects and recipients
 are always inserted as text, never interpreted as interface HTML.
 
